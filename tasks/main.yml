@@ -1,0 +1,9 @@
+---
+# tasks file for ansible-ssh-copy-id
+
+- name: Inject SSH public key into remote system
+  ssh_copy_id:
+    hostname: "{{ hostname }}"
+    username: "{{ username }}"
+    password: "{{ password }}"
+    ssh_public_key: "{{ ssh_public_key }}"
