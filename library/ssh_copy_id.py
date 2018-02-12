@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import paramiko
 from ansible.module_utils.basic import AnsibleModule
+from os.path import join
 
 ANSIBLE_METADATA = {
     'metadata_version': '1.0',
@@ -89,10 +90,15 @@ def run_module():
     # MODULE TASKS TO BE PERFORMED BELOW..
 
     # set authorized key path
-    auth_key = '/home/%s/.ssh/authorized_keys' % module.params['username']
+    if module.params['username'] == 'root':
+        base_dir = '/root/'
+    else:
+        base_dir = '/home/%s' % module.params['username']
+    auth_key = join(base_dir, '.ssh/authorized_keys')
 
     # create ssh client via paramiko
     ssh_con = paramiko.SSHClient()
+    ssh_con.load_system_host_keys()
     ssh_con.set_missing_host_key_policy(paramiko.AutoAddPolicy)
 
     # connect to remote system
