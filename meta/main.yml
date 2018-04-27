@@ -7,11 +7,10 @@ galaxy_info:
   platforms:
     - name: EL
       versions:
-        - 7
+        - all
     - name: Fedora
       versions:
-        - 25
-        - 26
+        - all
 
   galaxy_tags:
     - ssh
