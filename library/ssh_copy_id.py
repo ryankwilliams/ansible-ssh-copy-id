@@ -115,14 +115,16 @@ def run_module():
 
     # create ssh client via paramiko
     ssh_con = paramiko.SSHClient()
-    ssh_con.set_missing_host_key_policy(paramiko.WarningPolicy)
+    ssh_con.set_missing_host_key_policy(paramiko.WarningPolicy())
 
     # connect to remote system
     try:
         ssh_con.connect(
             hostname=hostname,
             username=username,
-            password=password
+            password=password,
+            look_for_keys=False,
+            allow_agent=False
         )
     except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
         paramiko.SSHException, socket.error) as ex:
