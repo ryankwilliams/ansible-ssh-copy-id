@@ -1,7 +1,9 @@
 #!/usr/bin/python
+import socket
+from os.path import join, isfile
+
 import paramiko
 from ansible.module_utils.basic import AnsibleModule
-from os.path import join
 
 ANSIBLE_METADATA = {
     'metadata_version': '1.0',
@@ -87,48 +89,84 @@ def run_module():
         supports_check_mode=True
     )
 
+    # set local variables
+    hostname = module.params['hostname']
+    username = module.params['username']
+    password = module.params['password']
+    public_key = module.params['ssh_public_key']
+
     # MODULE TASKS TO BE PERFORMED BELOW..
 
     # set authorized key path
-    if module.params['username'] == 'root':
+    if username == 'root':
         base_dir = '/root/'
     else:
-        base_dir = '/home/%s' % module.params['username']
+        base_dir = '/home/%s' % username
     auth_key = join(base_dir, '.ssh/authorized_keys')
+
+    # prior to creating ssh connection via paramiko, lets verify the public
+    # key supplied exists on disk
+    if isfile(public_key):
+        module.log('SSH public key %s exists!' % public_key)
+    else:
+        result['message'] = 'Unable to locate ssh public key %s' % public_key
+        module.fail_json(msg=result['message'])
+        module.exit_json(**result)
 
     # create ssh client via paramiko
     ssh_con = paramiko.SSHClient()
-    ssh_con.load_system_host_keys()
-    ssh_con.set_missing_host_key_policy(paramiko.AutoAddPolicy)
+    ssh_con.set_missing_host_key_policy(paramiko.WarningPolicy)
 
     # connect to remote system
-    ssh_con.connect(
-        hostname=module.params['hostname'],
-        username=module.params['username'],
-        password=module.params['password']
-    )
+    try:
+        ssh_con.connect(
+            hostname=hostname,
+            username=username,
+            password=password
+        )
+    except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
+        paramiko.SSHException, socket.error) as ex:
+        result['message'] = ex
+        module.fail_json(msg='Connection failed to %s' % hostname, **result)
+        module.exit_json(**result)
 
     # create sftp client
     sftp_con = ssh_con.open_sftp()
 
     # read ssh public key
-    with open(module.params['ssh_public_key'], 'r') as fh:
+    with open(public_key, 'r') as fh:
         data = fh.read()
 
-    # read remote system authorized key
-    file_reader = sftp_con.open(
-        auth_key,
-        mode='r'
-    )
-    authorized_key_data = file_reader.read()
-    file_reader.close()
+    add_key = True
 
-    # inject ssh public key
-    if data in authorized_key_data:
-        result['message'] = 'SSH public key already injected!'
-        result['changed'] = False
-        module.log(result['message'])
-    else:
+    # read remote system authorized key (if applicable)
+    try:
+        file_reader = sftp_con.open(
+            auth_key,
+            mode='r'
+        )
+        authorized_key_data = file_reader.read()
+        file_reader.close()
+
+        # check if key already exists
+        if data in authorized_key_data:
+            result['message'] = 'SSH public key already injected!'
+            result['changed'] = False
+            module.log(result['message'])
+            add_key = False
+    except IOError:
+        module.warn('Authorized keys file %s not found!' % auth_key)
+
+        # make the .ssh directory
+        ssh_dir = '/'.join(auth_key.split('/')[:-1])
+        try:
+            sftp_con.lstat(ssh_dir)
+        except IOError:
+            module.warn('%s user .ssh dir not found! Creating..' % username)
+            sftp_con.mkdir(ssh_dir)
+
+    # inject ssh public key into authorized keys
+    if add_key:
         file_handler = sftp_con.file(
             auth_key,
             mode='a'
@@ -141,10 +179,8 @@ def run_module():
         result['changed'] = True
         module.log(result['message'])
 
-    # close sftp connection
+    # close sftp/ssh connection
     sftp_con.close()
-
-    # close ssh connection
     ssh_con.close()
 
     # exit with results
