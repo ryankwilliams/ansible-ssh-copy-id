@@ -1,39 +1,48 @@
 [![Build Status](https://travis-ci.org/rywillia/ansible-ssh-copy-id.svg?branch=master)](https://travis-ci.org/rywillia/ansible-ssh-copy-id)
 
-SSH copy id
+ssh-copy-id
 ===========
 
-This role will allow you to inject a SSH public key into a remote system for
-pass wordless authenticaton.
+This role provides the ability to authorize remote systems for passwordless
+SSH authentication.
 
-Requirements
-------------
-
-Please see the metadata file for the requirements to run this role.
+This role is helpful when you have a remote machine you want to use by
+ansible and wish to use SSH key based authentication. It will handle setting
+the SSH keys on the remote machine allowing you to create an ansible inventory
+file with the remote machine. Then you can easily call any ansible playbook
+against the remote machine.
 
 Role Variables
 --------------
 
-```yaml
-hostname:           # remote system hostname or IP address
-username:           # remote system username
-password:           # remote system password
-ssh_public_key:     # ssh public key to inject (include absolute path)
-```
+Below are the available varaibles you will need to supply to the role.
+
+| Variable | Description |
+| --- | --- |
+| hostname | remote system to connect too (FQDN|IP) |
+| username | username to connect to remote system |
+| password | password to connect to remote system |
+| ssh_public_key | public key file (absolute path) to set into remote system |
 
 Example Playbook
 ----------------
 
+This example play below demonstrates ansible setting up passwordless SSH
+authentication on a user supplied remote machine that currently does not have
+SSH key based authentication configured.
+
 ```yaml
-- hosts: servers
+---
+- name: configure passwordless ssh authentication on a remote machine
+  hosts: localhost
+
   roles:
-    - {
-        role: rywillia.ssh-copy-id,
-        hostname: server1,
-        username: username,
-        password: password,
-        ssh_public_key: /home/user1/.ssh/id_rsa.pub
-    }
+    - role: rywillia.ssh-copy-id
+      vars:
+        hostname: 127.0.0.1
+        username: username
+        password: password
+        ssh_public_key: /home/username/.ssh/id_rsa.pub
 ```
 
 License
