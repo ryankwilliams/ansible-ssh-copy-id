@@ -23,6 +23,7 @@ Below are the available varaibles you will need to supply to the role.
 | username | username to connect to remote system |
 | password | password to connect to remote system |
 | ssh_public_key | public key file (absolute path) to set into remote system |
+| port | SSH port to connect to |
 
 Example Playbook
 ----------------
@@ -43,6 +44,7 @@ SSH key based authentication configured.
         username: username
         password: password
         ssh_public_key: /home/username/.ssh/id_rsa.pub
+        ssh_port: port
 ```
 
 License
