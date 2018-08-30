@@ -7,3 +7,4 @@
     username: "{{ username }}"
     password: "{{ password }}"
     ssh_public_key: "{{ ssh_public_key }}"
+    ssh_port: "{{ port }}"

@@ -39,7 +39,9 @@ options:
         description:
             - SSH public key (include absolute path)
         required: true
-
+    ssh_port:
+        description:
+            - SSH port
 author:
     - Ryan Williams
 '''
@@ -52,6 +54,7 @@ EXAMPLES = '''
     username: username
     password: password
     ssh_public_key: /home/user/.ssh/id_rsa.pub
+    ssh_port: 22
 '''
 
 RETURN = '''
@@ -73,7 +76,8 @@ def run_module():
         hostname=dict(type='str', required=True),
         username=dict(type='str', required=True),
         password=dict(type='str', required=True, no_log=True),
-        ssh_public_key=dict(type='str', required=True)
+        ssh_public_key=dict(type='str', required=True),
+        ssh_port=dict(type='str', required=True)
     )
 
     # results dictionary
@@ -94,7 +98,8 @@ def run_module():
     username = module.params['username']
     password = module.params['password']
     public_key = module.params['ssh_public_key']
-
+    port = module.params['ssh_port']
+    
     # MODULE TASKS TO BE PERFORMED BELOW..
 
     # set authorized key path
@@ -124,7 +129,8 @@ def run_module():
             username=username,
             password=password,
             look_for_keys=False,
-            allow_agent=False
+            allow_agent=False,
+            port=port
         )
     except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
         paramiko.SSHException, socket.error) as ex:
