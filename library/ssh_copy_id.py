@@ -42,6 +42,7 @@ options:
     ssh_port:
         description:
             - SSH port
+        required: false
 author:
     - Ryan Williams
 '''
@@ -77,7 +78,7 @@ def run_module():
         username=dict(type='str', required=True),
         password=dict(type='str', required=True, no_log=True),
         ssh_public_key=dict(type='str', required=True),
-        ssh_port=dict(type='str', required=True)
+        ssh_port=dict(type='str', required=False)
     )
 
     # results dictionary
@@ -99,7 +100,7 @@ def run_module():
     password = module.params['password']
     public_key = module.params['ssh_public_key']
     port = module.params['ssh_port']
-    
+
     # MODULE TASKS TO BE PERFORMED BELOW..
 
     # set authorized key path

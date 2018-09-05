@@ -44,7 +44,7 @@ SSH key based authentication configured.
         username: username
         password: password
         ssh_public_key: /home/username/.ssh/id_rsa.pub
-        ssh_port: port
+        ssh_port: 22
 ```
 
 License

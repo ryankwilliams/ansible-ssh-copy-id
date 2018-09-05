@@ -1,0 +1,5 @@
+---
+# defaults file for ansible-ssh-copy-id
+
+# ssh port
+ssh_port: 22
