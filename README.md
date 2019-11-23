@@ -38,7 +38,7 @@ SSH key based authentication configured.
   hosts: localhost
 
   roles:
-    - role: rywillia.ssh-copy-id
+    - role: ryankwilliams.ssh_copy_id
       vars:
         hostname: 127.0.0.1
         username: username
