@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: ssh-copy-id
   author: Ryan Williams
   description: Inject SSH public key into remote system
   license: GPLv3
