@@ -15,6 +15,6 @@ galaxy_info:
 
   galaxy_tags:
     - ssh
-    - ssh-copy-id
+    - sshcopyid
 
 dependencies: []
