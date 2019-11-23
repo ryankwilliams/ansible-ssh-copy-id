@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rywillia/ansible-ssh-copy-id.svg?branch=master)](https://travis-ci.org/rywillia/ansible-ssh-copy-id)
+[![Build Status](https://travis-ci.org/ryankwilliams/ansible-ssh-copy-id.svg?branch=master)](https://travis-ci.org/ryankwilliams/ansible-ssh-copy-id)
 
 ssh-copy-id
 ===========
