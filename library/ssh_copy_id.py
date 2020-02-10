@@ -182,6 +182,7 @@ def run_module():
         )
         file_handler.write(data)
         file_handler.flush()
+        file_handler.chmod(int('0600', 8))
         file_handler.close()
 
         result['message'] = 'SSH public key injected!'
