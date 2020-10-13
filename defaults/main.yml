@@ -3,3 +3,6 @@
 
 # ssh port
 ssh_port: 22
+
+# is the destination Hetzner Storage Box?
+hetzner_storagebox: false

@@ -39,6 +39,10 @@ options:
         description:
             - SSH public key (include absolute path)
         required: true
+    hetzner_storagebox:
+        description:
+            - Is destination a Hetzner Storage Box?
+        required: false
     ssh_port:
         description:
             - SSH port
@@ -55,6 +59,7 @@ EXAMPLES = '''
     username: username
     password: password
     ssh_public_key: /home/user/.ssh/id_rsa.pub
+    hetzner_storagebox: false
     ssh_port: 22
 '''
 
@@ -78,6 +83,7 @@ def run_module():
         username=dict(type='str', required=True),
         password=dict(type='str', required=True, no_log=True),
         ssh_public_key=dict(type='str', required=True),
+        hetzner_storagebox=dict(type='str', required=False),
         ssh_port=dict(type='str', required=False)
     )
 
@@ -99,16 +105,21 @@ def run_module():
     username = module.params['username']
     password = module.params['password']
     public_key = module.params['ssh_public_key']
+    hetzner_storagebox = module.params['hetzner_storagebox']
     port = module.params['ssh_port']
 
     # MODULE TASKS TO BE PERFORMED BELOW..
 
     # set authorized key path
-    if username == 'root':
-        base_dir = '/root/'
+    # Add Hetzner Storage-box support
+    if hetzner_storagebox.lower() == 'true':
+        auth_key = '.ssh/authorized_keys'
     else:
-        base_dir = '/home/%s' % username
-    auth_key = join(base_dir, '.ssh/authorized_keys')
+        if username == 'root':
+            base_dir = '/root/'
+        else:
+            base_dir = '/home/%s' % username
+            auth_key = join(base_dir, '.ssh/authorized_keys')
 
     # prior to creating ssh connection via paramiko, lets verify the public
     # key supplied exists on disk
@@ -158,7 +169,7 @@ def run_module():
         file_reader.close()
 
         # check if key already exists
-        if data in authorized_key_data:
+        if data in authorized_key_data.decode('utf-8'):
             result['message'] = 'SSH public key already injected!'
             result['changed'] = False
             module.log(result['message'])
@@ -167,7 +178,11 @@ def run_module():
         module.warn('Authorized keys file %s not found!' % auth_key)
 
         # make the .ssh directory
-        ssh_dir = '/'.join(auth_key.split('/')[:-1])
+        if hetzner_storagebox.lower() == 'true':
+            ssh_dir = '.ssh'
+        else:
+            ssh_dir = '/'.join(auth_key.split('/')[:-1])
+
         try:
             sftp_con.lstat(ssh_dir)
         except IOError:
