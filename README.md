@@ -23,7 +23,6 @@ Below are the available varaibles you will need to supply to the role.
 | username | username to connect to remote system |
 | password | password to connect to remote system |
 | ssh_public_key | public key file (absolute path) to set into remote system |
-| hetzner_storagebox | if set to true allows copying keys to Hetzner storage box (without this it fails) |
 | port | SSH port to connect to |
 
 Example Playbook
@@ -39,13 +38,13 @@ SSH key based authentication configured.
   hosts: localhost
 
   roles:
-    - role: rywillia.ssh-copy-id
+    - role: ryankwilliams.ssh_copy_id
       vars:
         hostname: 127.0.0.1
         username: username
         password: password
         ssh_public_key: /home/username/.ssh/id_rsa.pub
-	hetzner_storagebox: true
+        hetzner_storagebox: true
         ssh_port: 22
 ```
 
