@@ -44,6 +44,7 @@ SSH key based authentication configured.
         username: username
         password: password
         ssh_public_key: /home/username/.ssh/id_rsa.pub
+        hetzner_storagebox: true
         ssh_port: 22
 ```
 
