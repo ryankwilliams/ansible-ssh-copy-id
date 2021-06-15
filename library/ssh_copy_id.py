@@ -117,6 +117,7 @@ def run_module():
     else:
         if username == 'root':
             base_dir = '/root/'
+            auth_key = join(base_dir, '.ssh/authorized_keys')
         else:
             base_dir = '/home/%s' % username
             auth_key = join(base_dir, '.ssh/authorized_keys')
