@@ -1,7 +1,4 @@
-[![Build Status](https://travis-ci.org/ryankwilliams/ansible-ssh-copy-id.svg?branch=master)](https://travis-ci.org/ryankwilliams/ansible-ssh-copy-id)
-
-ssh-copy-id
-===========
+# ssh-copy-id
 
 This role provides the ability to authorize remote systems for passwordless
 SSH authentication.
@@ -12,8 +9,7 @@ the SSH keys on the remote machine allowing you to create an ansible inventory
 file with the remote machine. Then you can easily call any ansible playbook
 against the remote machine.
 
-Role Variables
---------------
+## Role Variables
 
 Below are the available varaibles you will need to supply to the role.
 
@@ -25,8 +21,7 @@ Below are the available varaibles you will need to supply to the role.
 | ssh_public_key | public key file (absolute path) to set into remote system |
 | port | SSH port to connect to |
 
-Example Playbook
-----------------
+## Example Playbook
 
 This example play below demonstrates ansible setting up passwordless SSH
 authentication on a user supplied remote machine that currently does not have
@@ -48,12 +43,10 @@ SSH key based authentication configured.
         ssh_port: 22
 ```
 
-License
--------
+## License
 
 GPLv3
 
-Author Information
-------------------
+## Author Information
 
 Ryan Williams
