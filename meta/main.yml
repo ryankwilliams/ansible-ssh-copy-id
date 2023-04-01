@@ -1,9 +1,9 @@
 galaxy_info:
-  role_name: ssh-copy-id
-  author: Ryan Williams
+  role_name: ssh_copy_id
+  author: ryankwilliams
   description: Inject SSH public key into remote system
   license: GPLv3
-  min_ansible_version: 2.0
+  min_ansible_version: "2.0"
 
   platforms:
     - name: EL
